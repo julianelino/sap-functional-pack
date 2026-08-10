@@ -45,7 +45,9 @@ fronteiras declaradas e identificadores compartilhados.
   recusa a construir se a validação falhar.
 - `RELEASE-CHECKLIST.md` — o que foi verificado, o que não foi, e o que precisa ser feito à mão antes
   de enviar.
-- CI validando o pacote a cada push.
+- `.github/workflows/validate.yml` — CI que valida o pacote no Linux e confere a sintaxe dos `.ps1`
+  num runner Windows. **Escrito mas ainda não ativo:** publicar arquivo de workflow exige o escopo
+  `workflow` no token, que não estava disponível na publicação. Ver `RELEASE-CHECKLIST.md`.
 
 ### Limitação conhecida desta versão
 

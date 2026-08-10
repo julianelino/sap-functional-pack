@@ -73,6 +73,18 @@ não consegui testar.
 Costura mais frágil do pacote. Se duas skills dispararem no mesmo prompt, estreite as `description`,
 não o comportamento.
 
+### 4. Ativar o CI
+
+O arquivo `.github/workflows/validate.yml` existe no repositório local mas **não foi publicado**:
+criar workflow exige o escopo `workflow` no token, e o GitHub recusa tanto por `git push` quanto pela
+API de conteúdo.
+
+- [ ] `gh auth refresh -h github.com -s workflow`, depois `git add .github && git commit && git push`
+- [ ] ou colar o conteúdo do arquivo pela interface web do GitHub
+
+O job que importa é o do `windows-latest`: ele roda o parser do PowerShell sobre os quatro `.ps1`,
+que é a única verificação automática possível para o caminho que as usuárias vão usar.
+
 ---
 
 ## Gerar o pacote
