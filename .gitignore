@@ -14,3 +14,6 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
+
+# Processo interno de release — fica local, nao vai para o repositorio publicado
+RELEASE-CHECKLIST.md

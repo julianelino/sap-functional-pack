@@ -118,7 +118,6 @@ Vale para as três, e é o que sustenta o pacote:
 sap-functional-pack/
 ├── README.md                      este arquivo
 ├── CHANGELOG.md                   versão do conjunto
-├── RELEASE-CHECKLIST.md           o que está verificado e o que falta antes de enviar
 ├── install.ps1                    instala as três
 ├── LICENSE
 ├── packaging/

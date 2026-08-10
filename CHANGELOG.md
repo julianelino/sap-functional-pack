@@ -43,17 +43,19 @@ fronteiras declaradas e identificadores compartilhados.
   emoji de status.
 - `packaging/make-release.sh` — gera o zip para a usuária final, sem material de desenvolvimento, e
   recusa a construir se a validação falhar.
-- `RELEASE-CHECKLIST.md` — o que foi verificado, o que não foi, e o que precisa ser feito à mão antes
-  de enviar.
 - `.github/workflows/validate.yml` — CI que valida o pacote no Linux e confere a sintaxe dos `.ps1`
   num runner Windows. **Escrito mas ainda não ativo:** publicar arquivo de workflow exige o escopo
-  `workflow` no token, que não estava disponível na publicação. Ver `RELEASE-CHECKLIST.md`.
+  `workflow` no token, que não estava disponível na publicação.
 
 ### Limitação conhecida desta versão
 
 Os 26 casos em `evals/` foram escritos e **não executados**, e os quatro scripts PowerShell não foram
-executados em Windows. Ambos exigem ambiente que a máquina de desenvolvimento não tinha. Ver
-`RELEASE-CHECKLIST.md`.
+executados em Windows. Ambos exigem ambiente que a máquina de desenvolvimento não tinha.
+
+O que é validado automaticamente a cada mudança: estrutura, orçamento de caracteres do Custom GPT,
+references citadas versus presentes, fronteiras entre as skills, encoding e integridade das cópias
+instaladas. Não há verificação automática de comportamento — cada alteração exige rodar os `evals/`
+de novo.
 
 O núcleo da `sap-functional-test-productivity` está em 7.987 de 8.000 caracteres do limite do Custom
 GPT. Qualquer adição futura ao bloco `CORE` dela exige remover algo antes.
