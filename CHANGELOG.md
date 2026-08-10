@@ -6,6 +6,31 @@ Versionamento segue [Semantic Versioning](https://semver.org/). Para um pacote d
 significa mudança que altera a forma dos artefatos gerados ou o vocabulário que as equipes já
 adotaram.
 
+## [1.0.2] — 2026-08-10
+
+### Corrigido
+
+- **Três evals reusavam o cenário dos próprios references.** `spec-writer/01-invented-rule`,
+  `test-productivity/10-meeting-transcript` e `test-productivity/06-abap-snippet` usavam o bloqueio
+  de fornecedor com tipos ZRET/ZRE2 — o mesmo domínio do `worked-example.md` que as skills carregam.
+  Nenhum deles conseguia distinguir "a skill aplicou a disciplina" de "a skill reconheceu o exemplo
+  que já tem". O `01-invented-rule` era o mais grave: é o caso que protege contra regra inventada
+  chegar aprovada ao cliente, e era o que menos provava.
+
+  Reescritos em domínios que não aparecem em `references/`: PM (encerramento técnico de ordem),
+  SD (limite de crédito e bloqueio de remessa) e FI (controle de período contábil). A estrutura das
+  armadilhas foi mantida — é ela que deve ser testada — e o `01` ganhou dois tipos que o worked
+  example não tem: conceito de negócio sem discriminador técnico, e afirmação de processo que pode
+  ou não ser regra de sistema.
+
+### Adicionado
+
+- `packaging/build-all.sh` passa a falhar quando um prompt de eval e um arquivo de `references/`
+  compartilham um código SAP customizado (`Z*`/`Y*`). Foi esse check que localizou o terceiro caso
+  depois que os dois primeiros já tinham sido corrigidos à mão.
+- Cada eval reescrito carrega uma nota de manutenção listando os domínios já usados no pacote, para
+  a próxima reescrita não recriar o problema.
+
 ## [1.0.1] — 2026-08-10
 
 ### Corrigido

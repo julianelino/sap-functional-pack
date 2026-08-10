@@ -59,7 +59,27 @@ else
   err "the pack routing eval is missing: $routing"
 fi
 
-# 4. one licence, one owner
+# 4. evals nao podem reusar o cenario dos proprios references.
+# Um eval que compartilha o dominio de um worked-example nao distingue "a skill
+# aplicou a disciplina" de "a skill reconheceu o exemplo que carrega". Procura
+# codigos SAP customizados (Z*/Y*) que apareçam nos dois lados.
+for d in "$SKILLS"/*/; do
+  name="$(basename "$d")"
+  [[ -d "$d/evals/cases" && -d "$d/references" ]] || continue
+  refs="$(cat "$d"/references/*.md 2>/dev/null)"
+  for case_file in "$d"/evals/cases/*.md; do
+    # so o bloco do prompt, nao a secao "Note for whoever maintains this file"
+    prompt="$(awk '/^## Prompt/,/^## Must/' "$case_file")"
+    while read -r code; do
+      [[ -z "$code" ]] && continue
+      if grep -qF "$code" <<<"$refs"; then
+        err "contaminacao: $(basename "$case_file") usa '$code', que tambem esta em $name/references/"
+      fi
+    done < <(grep -oE '\b[ZY][A-Z0-9]{2,5}\b' <<<"$prompt" | sort -u)
+  done
+done
+
+# 5. one licence, one owner
 for d in "$SKILLS"/*/; do
   [[ -f "$d/LICENSE" ]] || err "$(basename "$d") has no LICENSE"
 done
