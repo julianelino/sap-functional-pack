@@ -1,0 +1,51 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pack:
+    name: Estrutura e integridade
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validar as skills e os invariantes do pacote
+        run: ./packaging/build-all.sh --check
+
+      - name: Conferir que os prompts gerados nao foram commitados
+        run: |
+          # packaging/openai/*.md sao artefatos de build; versiona-los gera
+          # conflito de merge a cada rebuild.
+          if git ls-files --error-unmatch 'skills/*/packaging/openai/*.md' 2>/dev/null; then
+            echo "::error::artefatos gerados foram commitados; veja .gitignore"
+            exit 1
+          fi
+          echo "ok — nenhum artefato gerado versionado"
+
+  powershell:
+    name: Sintaxe do PowerShell
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Analisar todos os .ps1
+        shell: pwsh
+        run: |
+          # Nao executa os scripts — apenas garante que o parser aceita.
+          # Execucao de verdade continua sendo manual, ver RELEASE-CHECKLIST.md.
+          $failed = $false
+          Get-ChildItem -Recurse -Filter *.ps1 | ForEach-Object {
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              $_.FullName, [ref]$null, [ref]$errors) | Out-Null
+            if ($errors) {
+              Write-Host "::error file=$($_.FullName)::$($errors[0].Message)"
+              $failed = $true
+            } else {
+              Write-Host "ok - $($_.Name)"
+            }
+          }
+          if ($failed) { exit 1 }
