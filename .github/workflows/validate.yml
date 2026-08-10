@@ -17,9 +17,11 @@ jobs:
 
       - name: Conferir que os prompts gerados nao foram commitados
         run: |
-          # packaging/openai/*.md sao artefatos de build; versiona-los gera
-          # conflito de merge a cada rebuild.
-          if git ls-files --error-unmatch 'skills/*/packaging/openai/*.md' 2>/dev/null; then
+          # Apenas core-prompt.md e full-prompt.md sao gerados pelo build.
+          # build-instructions.md e documentacao-fonte versionada.
+          if git ls-files --error-unmatch \
+            'skills/*/packaging/openai/core-prompt.md' \
+            'skills/*/packaging/openai/full-prompt.md' 2>/dev/null; then
             echo "::error::artefatos gerados foram commitados; veja .gitignore"
             exit 1
           fi
