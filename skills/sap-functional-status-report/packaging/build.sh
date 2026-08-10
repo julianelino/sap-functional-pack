@@ -50,7 +50,7 @@ mark
 [[ "$(grep -c 'CORE:BEGIN' "$SKILL")" == "1" ]] || err "expected exactly one CORE:BEGIN marker"
 [[ "$(grep -c 'CORE:END'   "$SKILL")" == "1" ]] || err "expected exactly one CORE:END marker"
 
-core="$(awk '/CORE:BEGIN/{f=1;next} /CORE:END/{f=0} f' "$SKILL")"
+core="$(awk '/CORE:BEGIN/{f=1;next} /CORE:END/{f=0} f' "$SKILL" | awk 'NF||seen{seen=1;print}')"
 core_chars="$(printf '%s' "$core" | wc -m | tr -d ' ')"
 
 if (( core_chars > GPT_LIMIT )); then
@@ -147,7 +147,7 @@ if (( CHECK_ONLY == 0 )); then
     ok "packaging/openai/core-prompt.md — ${emitted}/${GPT_LIMIT} chars"
   fi
 
-  awk 'NR>1 && /^---$/{p=1;next} p' "$SKILL" \
+  awk 'NR==1 && $0=="---"{fm=1;next} fm && $0=="---"{fm=0;body=1;next} body' "$SKILL" \
     | grep -v 'CORE:BEGIN\|CORE:END' > "$OUTDIR/full-prompt.md"
   ok "packaging/openai/full-prompt.md — $(wc -m < "$OUTDIR/full-prompt.md" | tr -d ' ') chars"
 fi

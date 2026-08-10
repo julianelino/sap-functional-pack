@@ -6,6 +6,29 @@ Versionamento segue [Semantic Versioning](https://semver.org/). Para um pacote d
 significa mudança que altera a forma dos artefatos gerados ou o vocabulário que as equipes já
 adotaram.
 
+## [1.0.1] — 2026-08-10
+
+### Corrigido
+
+- **`packaging/build.sh` corrompia o `full-prompt.md` gerado.** O `awk` que remove o frontmatter
+  disparava em toda linha `---` do documento, não apenas na que fecha o frontmatter, engolindo em
+  silêncio as réguas horizontais do corpo. O `build.ps1` usava regex ancorada e estava correto.
+  Encontrado ao executar os dois e comparar byte a byte.
+- **Os dois scripts não produziam saída idêntica**, apesar de afirmarem isso. Além do `awk`, o
+  `build.sh` mantinha a linha em branco inicial do bloco `CORE`, gerando um `\n` a mais que o
+  `build.ps1` não gerava. Agora os seis arquivos (dois por skill) saem idênticos nos dois runtimes,
+  verificado com `cmp`.
+
+### Verificado
+
+- Os sete scripts PowerShell passam no parser do PowerShell 7.4.6.
+- Os três `build.ps1` executam e produzem saída idêntica ao `build.sh`.
+- O `install.ps1` do pacote instala as três skills, respeita `-Only`, e não copia material de
+  desenvolvimento. Testado contra um diretório de usuário isolado.
+
+Ressalva: a verificação usou PowerShell 7 em Linux. Diferenças de Windows PowerShell 5.1, política de
+execução e semântica de `%USERPROFILE%` em Windows real continuam sem teste.
+
 ## [1.0.0] — 2026-08-10
 
 Primeira versão do pacote reunido. As três skills existiam separadas; agora formam um ciclo com

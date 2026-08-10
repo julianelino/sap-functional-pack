@@ -1,6 +1,6 @@
 # SAP Functional Pack
 
-**v1.0.0** · Três skills para quem trabalha com SAP funcional e testes e **não programa**. Elas
+**v1.0.1** · Três skills para quem trabalha com SAP funcional e testes e **não programa**. Elas
 cobrem o ciclo inteiro de uma demanda: escrever a especificação, analisar e testar, e reportar o
 trabalho.
 
