@@ -1,0 +1,67 @@
+Como conversar com o
+Agente
+​
+
+Cada bloco representa uma etapa.
+
+📌 Sobre a Demanda
+Responder:
+●​
+●​
+●​
+●​
+●​
+
+Qual cliente?
+Qual demanda/ chamado?
+Quando foi recebida?
+Quando foi iniciada?
+Qual a estimativa? expectativa de entrega?
+
+🎯 Próximos Passos
+Responder:
+●​
+●​
+●​
+
+O que será feito agora?
+Existe dependência externa?
+A previsão mudou?
+
+📅 Sobre o dia
+
+⚠️ Gestão
+
+Responder:
+
+Responder:
+
+●​
+
+●​
+●​
+●​
+
+O que foi feito hoje?
+(Reunião/KT/Debug/Alinhamento)
+
+●​
+
+Surgiu alguma nova demanda?
+
+📈 Situação Atual
+Responder:
+●​
+●​
+●​
+
+Quanto já foi concluído? (%)
+Terminou? Ficou pendente?
+Existe bloqueio? ( é técnico? Funcional?
+Acesso?)
+
+Existe risco? (estourar prazo, não entregar)
+A gestão precisa atuar?
+Alguma prioridade mudou?
+
+

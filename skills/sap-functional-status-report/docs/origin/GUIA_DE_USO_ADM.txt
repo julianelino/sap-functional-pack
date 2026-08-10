@@ -1,0 +1,516 @@
+================================================================
+GUIA DE USO - ADM (Arquiteto de Processos)
+================================================================
+
+Documento pratico do dia-a-dia. Voce ja sabe que o ADM esta
+configurado corretamente; este guia mostra como FALAR com ele
+para extrair o melhor.
+
+O ADM e o terceiro vertice do seu ecossistema:
+- Claude (projeto): ABAP Sr - codigo, analise tecnica.
+- Gemini (Gem): Funcional Sr - spec funcional.
+- ADM (este GPT): Arquiteto - status, estimativa, E.T.
+
+================================================================
+1. PRIMEIRA REGRA - USAR GATILHO NA PRIMEIRA MENSAGEM
+================================================================
+
+Toda conversa nova com o ADM comeca melhor se voce indicar o
+gatilho logo de saida. Sao tres:
+
+#status     = relatorio do dia. Voce manda relato bruto e ele
+              transforma em status report executivo.
+
+#estimativa = estimativa de esforco para nova demanda. Ele
+              consulta a metrica oficial e o modelo de
+              documento.
+
+#et         = especificacao tecnica formal. Documento entregavel
+              que consolida spec funcional + analise tecnica.
+
+Sem gatilho, ele tenta inferir pelo tom da mensagem. Acerta na
+maioria das vezes, mas as vezes erra. Voce perde 1 turno.
+
+EXEMPLO RUIM:
+
+  voce: terminei a proposta tecnica da WI-3315 hoje, foi um dia
+        cheio. amanha quero focar na irani.
+
+EXEMPLO BOM:
+
+  voce: #status 22/05
+        manha: reuniao funcional DASA WI-3315 (1h)
+        10h-12h: hiperfoco WI-3315, proposta tecnica enviada
+        13h-18h: almoco, stand-up, dump em prod da Maxion (30min),
+                 inicio analise Irani (parou - DEV caiu)
+
+No primeiro caso, ele vai produzir alguma coisa, mas vai pedir
+muita informacao depois. No segundo caso, ele ja tem o que
+precisa e produz o relatorio direto.
+
+================================================================
+2. QUANDO USAR CADA UM
+================================================================
+
+USE #status QUANDO:
+
+- Voce quer fechar o dia com relatorio para gestao.
+- Voce esta no meio do dia e quer fazer um snapshot.
+- Voce esta voltando de ferias/feriado e quer registrar o que
+  pegou.
+- Voce mandou audio/notas soltas e quer transformar em algo
+  estruturado.
+
+USE #estimativa QUANDO:
+
+- Chegou uma demanda nova e voce precisa estimar horas antes de
+  aceitar formalmente.
+- Voce tem o escopo razoavel da demanda (mesmo que ainda nao
+  tenha a spec completa).
+- O cliente vai pedir "quantas horas?" e voce precisa de numero
+  defensavel.
+- Voce quer rodar varios cenarios (Baixa vs Media de complexidade)
+  para discutir com o consultor antes de fechar.
+
+USE #et QUANDO:
+
+- A spec funcional ja saiu (do Gemini ou do funcional do cliente).
+- A analise tecnica do Claude ja saiu (ou voce sabe que vai sair
+  em breve e quer adiantar a estrutura).
+- Voce precisa documentar formalmente a solucao para chamado /
+  CRQ / transporte.
+- O cliente exige documento tecnico formal.
+
+REGRA SIMPLES:
+
+  Status = todo dia.
+  Estimativa = comeco da demanda.
+  E.T. = meio/fim da demanda, antes do desenvolvimento.
+
+================================================================
+3. COMO DAR INPUT PARA #status
+================================================================
+
+O ADM precisa fechar a MATEMATICA DO TEMPO. O dia tem 8h. Se
+voce nao informar, ele para e pede.
+
+O QUE INFORMAR:
+
+- Data de referencia (DD/MM).
+- Blocos de tempo por hora ou aproximados. Pode ser:
+  * Hora exata: "9h-10h reuniao DASA"
+  * Aproximado: "manha toda na WI-3315"
+- Para cada bloco: cliente + WI/CRQ + o que aconteceu.
+- Bloqueios externos: quem segurou (funcional X, ambiente, BASIS,
+  gestor pendente). Quanto mais nominado, mais isento voce fica.
+- Hiperfoco: se passou o dia em uma demanda, FALAR o que ENTREGOU
+  (proposta tecnica enviada, debug concluido, analise documentada).
+
+EXEMPLO BOM:
+
+  #status 22/05
+
+  manha:
+  - 9h-10h reuniao funcional DASA sobre WI-3315
+  - 10h-12h hiperfoco WI-3315 - proposta tecnica enviada
+  - 12h-13h almoco
+
+  tarde:
+  - 13h-14h leitura de chamados / triagem
+  - 14h-15h stand-up squad + apoio dump em prod Maxion (30min)
+  - 15h-17h WI-2401 Irani - levantei estrutura, DEV caiu, parei
+  - 17h-18h documentacao interna
+
+EXEMPLO RUIM:
+
+  fiz um monte de coisa hoje, principalmente DASA
+
+OBSERVACAO:
+
+Almoco e pausa CONTAM no calculo das 8h. Nao precisam ser
+escondidos - sao parte do dia.
+
+Se voce tem bloco de tempo nao produtivo (espera, reuniao
+fluindo lentamente), declarar isso. O ADM vai narrar de forma
+profissional ("aguardando retorno de aprovacao funcional").
+
+QUANDO HOUVER LACUNA:
+
+Se a soma nao bate em 8h, o ADM vai apontar a lacuna. Resposta
+direta:
+- "13h-14h foi almoco estendido"
+- "14h-15h foi reuniao extra com gestao"
+- "ficou ocioso aguardando retorno do funcional"
+
+NAO MASCARAR. Se foi ocioso, foi ocioso. O ADM vai redigir
+profissional.
+
+================================================================
+4. COMO DAR INPUT PARA #estimativa
+================================================================
+
+O ADM consulta METRICA_ABAP.md (banco de horas) e MODELO_ESTIMATIVA.md
+(template do documento) automaticamente. Voce nao precisa citar.
+
+O QUE INFORMAR:
+
+- Cliente (nome - vai ser validado contra a tabela oficial).
+- Sistema/release/banco.
+- Demanda / WI / CRQ.
+- Lista de objetos a desenvolver. Para cada um:
+  * O que e (relatorio novo, ajuste de exit, CDS, interface CPI,
+    workflow, etc.).
+  * Complexidade aproximada se voce ja tem ideia (volume de
+    tabelas, regras de negocio, integracoes).
+- Consultor tecnico responsavel.
+- Quem aprova (se souber).
+
+O CLIENTE IMPORTA:
+
+A tabela oficial classifica cada cliente como AMS ou Fabrica de
+Software. Isso muda o calculo: Fabrica de Software soma Gestao
++ QA-Review SEMPRE. AMS so soma se total >= 40h.
+
+Conhecidos AMS: DASA, MAXION, IRANI, CTG (Citrosuco), CSN, B3,
+HONDA, BMW (espera, BMW e Fabrica), CAOA, BOTICARIO, etc.
+
+Conhecidos Fabrica de Software: AJINOMOTO, ALPARGATAS, BMW, BYD,
+GRUPO REAL, MERCEDEZ BENS, VW, Z-OUTROS.
+
+(Lista completa no METRICA_ABAP.md secao 7.)
+
+EXEMPLO BOM:
+
+  #estimativa
+
+  Cliente: MAXION
+  Sistema: S/4HANA 2022
+  Banco: HANA
+  Demanda: WI-2280
+  Consultor: Jucimar Souza
+
+  Escopo:
+  1. Ajustar relatorio existente ZRSD_VENDAS - incluir 2 colunas
+     calculadas. Le ~5 tabelas. Relatorio existente, alteracao
+     pontual.
+  2. Ajustar BAdI de validacao de preco - mexer em regra
+     existente, sem criar tela, sem alterar lógica de
+     substituicao.
+
+EXEMPLO RUIM:
+
+  estima ai um relatorio novo pra maxion
+
+DUAS MODALIDADES DE SAIDA:
+
+#estimativa por padrao gera uma PREVIA RAPIDA em texto (tabela
+curta com os objetos, complexidade, total). Voce valida e ajusta.
+
+Quando estiver pronto para gerar o DOCUMENTO FORMAL (entregavel
+ao cliente, 8 blocos, linguagem corporativa), peca:
+  "gera o documento"
+  "gera o formato oficial"
+  "gera para o cliente"
+
+Sem isso, ele fica na previa rapida.
+
+ATENCAO A TIPOS NAO CATALOGADOS:
+
+A metrica cobre 36 tipos (Novo + Ajuste de Report, IDOC, CDS,
+CPI, etc.). Se voce mencionar algo fora disso (ex.: SAP Build
+Process Automation, Joule, AI Foundation), o ADM vai marcar
+como "tipo nao catalogado" e tratar como horas TM (Time &
+Material). Nao vai inventar horas.
+
+================================================================
+5. COMO DAR INPUT PARA #et
+================================================================
+
+A E.T. NAO substitui a spec funcional. Ela CONSOLIDA spec
+funcional + analise tecnica em um documento entregavel.
+
+O QUE INFORMAR (no minimo):
+
+- Cliente / WI / sistema / banco.
+- Spec funcional disponivel? Cole / anexe / resuma o AS-IS e o
+  TO-BE.
+- Analise tecnica disponivel? Cole o que o Claude ABAP definiu
+  (estrategia, pontos de extensao, objetos impactados).
+- Criterios de aceite (especialmente performance).
+
+E SE FALTAR ANALISE TECNICA?
+
+Tudo bem. O ADM produz a E.T. com a parte funcional fechada e
+marca as secoes tecnicas como "AGUARDANDO ANALISE TECNICA -
+ABAP". Voce volta depois com o input do Claude e ele incrementa
+para v1.1, v1.2, etc.
+
+EXEMPLO BOM (com tudo):
+
+  #et
+
+  Cliente: MAXION
+  Demanda: WI-2280
+  Sistema: S/4HANA 2022 / HANA
+
+  Spec funcional (do Gemini):
+  - AS-IS: ZRSD_VENDAS le VBAK/VBAP, gera ALV diario.
+  - TO-BE: incluir Margem % (NETWR-VPRS)/NETWR*100 e CFOP
+    (VBRP-FKART, vazio para nao-faturados).
+  - R1: margem em 2 decimais.
+  - R2: CFOP vazio para sem fatura.
+  - C1: relatorio nao pode passar de 3 min para 30 dias.
+
+  Analise tecnica (do Claude):
+  - Implementar via append no ALV existente.
+  - VPRS lido de KONV via FAE protegida com driver de KNUMV.
+  - CFOP buscado em VBRK/VBRP via fluxo VBFA (origem TAS para
+    item de fatura).
+  - Indice secundario nao necessario - chave VBELN basta.
+
+EXEMPLO BOM (parcial - so spec funcional):
+
+  #et
+  Cliente: MAXION
+  Demanda: WI-2280
+  Sistema: S/4HANA 2022 / HANA
+
+  Spec funcional (do Gemini):
+  [...]
+
+  Analise tecnica do Claude: ainda nao saiu, vou abrir depois.
+
+Nesse caso, ele produz com secoes 4.2/4.3/5/9 marcadas como
+"AGUARDANDO ANALISE TECNICA - ABAP". Versao inicial 1.0.
+
+================================================================
+6. PROTECAO DO ANALISTA - O QUE ISSO SIGNIFICA
+================================================================
+
+O ADM tem 3 principios de protecao da sua imagem profissional:
+
+6.1. MATEMATICA DO TEMPO
+O gestor precisa VER o dia inteiro contabilizado. Se voce passou
+4h em reuniao, isso aparece - nao some no relatorio. Se sobrou
+4h util, o gestor sabe que voce nao avancou 8h em demanda porque
+foi REALMENTE 4h, nao porque voce demorou.
+
+6.2. EVIDENCIA DE VALOR (HIPERFOCO)
+Se voce passou o dia em UMA demanda, isso NAO e atraso. E
+aprofundamento. Mas voce tem que ENTREGAR algo concreto -
+proposta tecnica enviada, debug concluido, analise documentada.
+Sem entrega, hiperfoco vira "ficou enrolando em uma coisa so".
+
+6.3. BLOQUEIO EXTERNO EXPLICITO
+Quando outra pessoa segurou seu trabalho, isso vai no relatorio
+com NOME quando voce souber:
+- "Aguardando aprovacao do funcional Joao da Maxion"
+- "Ambiente DEV da Irani indisponivel"
+- "Acesso bloqueado por nao expiracao de role"
+
+LIMITE ETICO (NAO NEGOCIAVEL):
+
+Protecao NAO e inventar progresso, mascarar atraso real, criar
+bloqueio que nao houve, ou narrar dia improdutivo como produtivo.
+
+Se voce relatar honestamente um dia improdutivo (sem reuniao,
+sem bloqueio, sem entrega), o ADM vai redigir profissional
+("demanda em andamento - sem avanco material no dia") e parar
+ai. Nao vai inventar reuniao nem bloqueio.
+
+Se voce TENTAR forcar invencao ("inventa que foi reuniao
+extensa com BASIS"), o ADM deve recusar. Se ele aceitar, e bug
+do GPT - reporte.
+
+================================================================
+7. QUANDO O ADM VAI PARAR E PEDIR INFORMACAO
+================================================================
+
+O ADM tem pre-check obrigatorio. Ele para e pergunta quando:
+
+#status:
+- Voce nao informou a data.
+- A matematica do tempo nao fecha em 8h e falta bloco de tempo.
+- Voce nao indicou alguma demanda nominalmente (cliente + WI/CRQ).
+
+#estimativa:
+- Voce nao informou o cliente.
+- Voce nao descreveu o(s) objeto(s).
+- Algum objeto tem complexidade ambigua e ele precisa confirmar
+  antes de classificar Baixa vs Media.
+
+#et:
+- Falta spec funcional minima (AS-IS / TO-BE / regras).
+- Falta cliente/sistema.
+
+Quando ele perguntar, RESPONDA OBJETIVO:
+
+  ADM: "Para fechar a matematica de 22/05, faltam 2h entre 14h
+        e 16h. O que aconteceu nesse periodo?"
+
+  voce: "reuniao adicional com BASIS sobre transporte da WI-3315"
+
+Pronto. Nao precisa de paragrafo. Ele incorpora e fecha.
+
+================================================================
+8. MODO CHAT / WHATSAPP - VERSAO CURTA
+================================================================
+
+Quando voce precisa mandar status rapido pelo Google Messages,
+WhatsApp ou Teams, peca depois do relatorio completo:
+
+  "agora me da o modo chat"
+  "versao para whatsapp"
+  "resumo curto pra mandar pro gestor"
+
+Ele transforma o relatorio completo em mensagem curta, pronta
+para colar. Formato:
+
+  🔵 DASA - WI-3315
+  Demanda: Regra de comissao
+  Situacao: Proposta tecnica enviada
+  Proximo passo: Aguardando aprovacao funcional
+
+  🟠 IRANI - WI-2401
+  Demanda: Relatorio de estoque
+  Situacao: Bloqueado - DEV indisponivel
+  Proximo passo: Retomar quando ambiente voltar
+
+  🔄 MAXION - WI-2280
+  Demanda: Dump em prod (ad-hoc, 30min)
+  Situacao: Apoio pontual realizado
+  Proximo passo: Acompanhar reincidencia
+
+NAO peca modo chat para #estimativa nem #et. Esses sao
+documentos formais, nao mensagens.
+
+================================================================
+9. DOCUMENTO FORMAL - QUANDO PEDIR
+================================================================
+
+#estimativa: por padrao gera previa rapida. Peca:
+  "gera o documento"
+  "gera o formato oficial pra mandar pro cliente"
+  "monta o docx"
+
+#et: ja gera o documento formal por padrao (e o entregavel real).
+Versao 1.0 inicial, sobe a cada revisao (1.1, 1.2).
+
+#status: pode pedir versao formal para envio:
+  "monta para enviar por email"
+  "versao para reuniao de status"
+
+================================================================
+10. QUANDO O ADM ESTA ERRADO - COMO CORRIGIR
+================================================================
+
+Em vez de "tenta de novo":
+
+- Diga o que faltou:
+  "nao destacou que a Irani estava bloqueada"
+
+- Diga o que estava errado:
+  "horas do CPI estao acima - era Media Baixa, nao Media"
+
+- Diga o que voce esperava:
+  "queria que duplicasse a estimativa em duas versoes - uma
+   conservadora, uma agressiva"
+
+- Diga o que mudou:
+  "esqueci de mencionar que e Citrosuco - usar Y em vez de Z
+   na nomenclatura"
+
+Ele corrige com base no que voce apontar. Tentativa cega
+geralmente nao melhora.
+
+================================================================
+11. SINAIS DE QUE O ADM ESTA FAZENDO ALGO ERRADO
+================================================================
+
+Se notar qualquer um destes, CHAME ATENCAO:
+
+- Inventou reuniao que voce nao mencionou.
+- Inventou cliente, WI, transacao, BAdI.
+- Inventou horas em estimativa sem consultar a metrica.
+- Criou linha "Pos-implementacao" no Resumo Executivo (regra
+  conhecida - nao deve criar).
+- Mascarou dia improdutivo com narrativa fabricada.
+- Decidiu tecnologia em E.T. ("recomendo usar CDS view") - nao
+  e papel dele.
+- Escreveu codigo ABAP em E.T..
+- Usou datas relativas ("ontem", "essa semana").
+- Nao apontou lacuna na matematica do tempo - fechou o
+  relatorio com soma quebrada.
+- Soltou estimativa sem identificar AMS vs Fabrica de Software.
+
+Diga sem cerimonia. O GPT esta configurado para essa correcao.
+
+================================================================
+12. INTEGRACAO COM AS OUTRAS FERRAMENTAS
+================================================================
+
+Quando o relato do dia citar Claude ou Gemini, ele CONSOME, nao
+reinventa.
+
+EXEMPLO:
+
+  #status 22/05
+  manha: refinamento da spec da WI-2401 com o Gemini, saiu spec
+  v1.0. tarde: passei para o Claude ABAP analisar, ele apontou
+  USEREXIT_SAVE_DOCUMENT_PREPARE como ponto de extensao.
+
+Nesse caso, o ADM trata "spec saiu" como fato confirmado e
+"Claude apontou exit" como decisao tecnica ja tomada. Nao volta
+a perguntar nem reinventa.
+
+Para #et, o ideal e voce ja chegar com os outputs:
+- Spec do Gemini (cole ou descreva).
+- Analise tecnica do Claude (cole ou descreva).
+
+Quanto mais o ADM tiver, menos ele precisa adivinhar.
+
+================================================================
+13. CICLO DE VIDA DE UMA DEMANDA NO ECOSSISTEMA
+================================================================
+
+Fluxo padrao:
+
+1. Demanda chega (chamado, e-mail, reuniao).
+2. Gemini: refinar spec funcional formal.
+3. ADM #estimativa: gerar previa rapida, depois documento
+   formal de estimativa para o cliente.
+4. Cliente aprova estimativa.
+5. Claude: analise tecnica, codigo, plano de testes.
+6. ADM #et: consolidar spec funcional + analise tecnica em E.T.
+   formal.
+7. Desenvolvimento.
+8. ADM #status: relatorio diario do andamento.
+9. Transporte para QAS, testes.
+10. Aceite funcional.
+11. Transporte para PRD.
+12. ADM #status: registro de entrega.
+
+Voce nao usa o ADM em todas as etapas, mas as marcadas acima
+sao as oficiais.
+
+================================================================
+14. RESUMO EM 6 LINHAS
+================================================================
+
+1. Sempre comece com #status, #estimativa ou #et.
+2. Para #status: informe data + blocos de tempo + clientes +
+   WIs. Almoco conta.
+3. Para #estimativa: informe cliente + sistema + lista de
+   objetos com escopo.
+4. Para #et: traga spec do Gemini e (se disponivel) analise do
+   Claude.
+5. Bloqueios externos sao nominados. Hiperfoco precisa de
+   entrega concreta.
+6. ADM consulta METRICA_ABAP e MODELO_ESTIMATIVA automaticamente
+   - voce nao precisa citar.
+
+================================================================
+15. HISTORICO
+================================================================
+
+22.05.2026 - Criacao v1.

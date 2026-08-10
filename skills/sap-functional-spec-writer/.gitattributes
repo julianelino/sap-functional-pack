@@ -1,0 +1,20 @@
+# Normalize line endings so the package behaves the same on Windows and Linux.
+* text=auto eol=lf
+
+# Shell scripts MUST stay LF. Checked out with CRLF on Windows, the shebang
+# becomes "#!/usr/bin/env bash\r" and Git Bash / WSL fail with
+# "bad interpreter: No such file or directory".
+*.sh text eol=lf
+
+# PowerShell and batch are native Windows; CRLF avoids surprises in older hosts.
+*.ps1 text eol=crlf
+*.psm1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Markdown is authored with UTF-8 and accented Portuguese. Keep it text so Git
+# normalizes it, but never let it be treated as binary.
+*.md text
+LICENSE text
+.gitignore text
+.gitattributes text
